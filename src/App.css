@@ -149,7 +149,6 @@ ul {
 
 .item {
   position: relative;
-  display: flex;
   /* Vertical pans scroll the page; horizontal pans reach the swipe handler. */
   touch-action: pan-y;
   background: var(--card);
@@ -159,21 +158,12 @@ ul {
   transition: transform 0.2s ease;
 }
 
-/* The checkbox has its own tap area; a tap on the rest of the row opens the item form. */
 .toggle {
-  flex: none;
-  display: flex;
-  align-items: center;
-  padding: 14px 0 14px 16px;
-}
-
-.open {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 16px 14px 14px;
+  padding: 14px 16px;
   text-align: left;
   font-size: 17px;
 }

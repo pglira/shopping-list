@@ -60,12 +60,9 @@ export default function App() {
         className="toggle"
         role="checkbox"
         aria-checked={item.boughtAt !== null}
-        aria-label={item.name}
         onClick={() => setData((d) => toggleItem(d, item.id))}
       >
         <span className="box">{item.boughtAt !== null && <Icon name="check" size={18} />}</span>
-      </button>
-      <button className="open" onClick={() => setSheet({ id: item.id })}>
         <span className="text">{item.name}</span>
         {item.quantity && <span className="quantity">{item.quantity}</span>}
       </button>
