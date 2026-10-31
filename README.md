@@ -4,7 +4,8 @@ A Progressive Web App for a shopping list.
 
 - Add an item with the + button, with an optional quantity such as "2" or "500 g".
 - The form for a new item shows earlier items. Tap one to add it to the list again.
-- Tap an item to put it into the cart. Tap it again to take it out of the cart.
+- Tap the checkbox of an item to put it into the cart. Tap it again to take it out of the cart.
+- Tap an item to edit it.
 - Items to buy show in the order of creation. Items in the cart show below, the most recent first.
 - Swipe an item to the left to show Edit and Delete. Delete asks for a second tap.
 - Remove all items in the cart with "Clear" and a second tap.
