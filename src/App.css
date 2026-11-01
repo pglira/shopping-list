@@ -315,9 +315,34 @@ ul {
   background: var(--control);
 }
 
+.match-remove {
+  color: var(--muted);
+}
+
 .suggestions {
   display: grid;
   gap: 8px;
+}
+
+.suggestions-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chips-edit {
+  padding: 6px 12px;
+  background: var(--control);
+  font-size: 14px;
+}
+
+.chips-edit.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.chips.removing .chip {
+  color: var(--danger);
 }
 
 .chips {

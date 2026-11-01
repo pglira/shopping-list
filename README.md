@@ -3,8 +3,8 @@
 A Progressive Web App for a shopping list.
 
 - Add an item with the + button, with an optional quantity such as "2" or "500 g".
-- The form for a new item shows earlier items, the most used first. Tap one to add it to the list again.
-- While you type a name, the form suggests up to 5 earlier items: names that start with the text first, then names that contain it, the most used first. Tap a name to fill the field, or tap its + to add the item at once.
+- The form for a new item shows earlier items, the most used first. Tap one to add it to the list again. Tap "Edit" to remove earlier items with a tap.
+- While you type a name, the form suggests up to 5 earlier items: names that start with the text first, then names that contain it, the most used first. Tap a name to fill the field, or tap its + to add the item at once. Tap its ✕ to remove the name from the earlier items.
 - Tap an item to put it into the cart. Tap it again to take it out of the cart.
 - Items to buy show in the order of creation. Items in the cart show below, the most recent first.
 - Swipe an item to the left to show Edit and Delete. Delete asks for a second tap.

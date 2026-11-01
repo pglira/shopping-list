@@ -2,6 +2,7 @@
 // all icons have the same weight. The icons use the current text color.
 const PATHS = {
   plus: 'M12 5v14M5 12h14',
+  close: 'M6 6l12 12M18 6L6 18',
   auto: 'M12 4a8 8 0 0 1 0 16a8 8 0 0 1 0-16zM12 4v16',
   sun: 'M12 8a4 4 0 0 1 0 8a4 4 0 0 1 0-8zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2',
   moon: 'M19 15A8 8 0 0 1 9 5a8 8 0 1 0 10 10z',

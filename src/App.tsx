@@ -11,6 +11,7 @@ import {
   removeItem,
   saveData,
   suggestions,
+  forget,
   toBuy,
   toggleItem,
   updateItem,
@@ -126,6 +127,7 @@ export default function App() {
           item={sheetItem}
           onCancel={close}
           onAdd={(name) => setData((d) => addItem(d, name, ''))}
+          onForget={(name) => setData((d) => forget(d, name))}
           onSave={(name, quantity) => {
             setData((d) => (sheetItem ? updateItem(d, sheetItem.id, name, quantity) : addItem(d, name, quantity)));
             close();
@@ -294,6 +296,8 @@ interface ItemFormProps {
   onSave: (name: string, quantity: string) => void;
   // Add an earlier item to the list and keep the form open.
   onAdd: (name: string) => void;
+  // Remove an earlier item from the history.
+  onForget: (name: string) => void;
   onCancel: () => void;
   onDelete?: () => void;
 }
@@ -315,11 +319,15 @@ function Highlight({ text, query }: { text: string; query: string }) {
 // shows the matching earlier items: a tap on a name puts it into the item
 // field, and a tap on its + adds it to the list. While the item field is
 // empty, the form shows the earlier items as chips; a tap adds the item. The
-// form for a new item stays open after a tap on an earlier item.
+// form for a new item stays open after a tap on an earlier item. The ✕ of a
+// matching earlier item removes it from the history. In the edit mode of the
+// chips, a tap on a chip removes the earlier item from the history.
 function ItemForm(props: ItemFormProps) {
   const [name, setName] = useState(props.item?.name ?? '');
   const [quantity, setQuantity] = useState(props.item?.quantity ?? '');
   const [confirmDelete, setConfirmDelete] = useState(false);
+  // True while a tap on a chip removes the earlier item instead of adding it.
+  const [editChips, setEditChips] = useState(false);
   const value = name.trim();
   const earlier = props.item ? [] : suggestions(props.data, name);
   const nameField = useRef<HTMLInputElement>(null);
@@ -376,6 +384,18 @@ function ItemForm(props: ItemFormProps) {
                 </button>
                 <button
                   type="button"
+                  className="match-add match-remove"
+                  onClick={() => {
+                    props.onForget(n);
+                    nameField.current?.focus();
+                  }}
+                  aria-label={`Remove ${n} from the earlier items`}
+                  title="Remove from the earlier items"
+                >
+                  <Icon name="close" size={18} />
+                </button>
+                <button
+                  type="button"
                   className="match-add"
                   onClick={() => {
                     props.onAdd(n);
@@ -393,11 +413,29 @@ function ItemForm(props: ItemFormProps) {
         )}
         {!value && earlier.length > 0 && (
           <div className="suggestions">
-            <span className="field-label">Earlier items: tap to add</span>
-            <div className="chips">
+            <span className="suggestions-head">
+              <span className="field-label">
+                {editChips ? 'Earlier items: tap to remove' : 'Earlier items: tap to add'}
+              </span>
+              <button
+                type="button"
+                className={editChips ? 'chips-edit active' : 'chips-edit'}
+                aria-pressed={editChips}
+                onClick={() => setEditChips(!editChips)}
+              >
+                {editChips ? 'Done' : 'Edit'}
+              </button>
+            </span>
+            <div className={editChips ? 'chips removing' : 'chips'}>
               {earlier.slice(0, SUGGESTIONS).map((n) => (
-                <button key={n} type="button" className="chip" onClick={() => props.onAdd(n)}>
-                  <Icon name="plus" size={16} />
+                <button
+                  key={n}
+                  type="button"
+                  className="chip"
+                  onClick={() => (editChips ? props.onForget(n) : props.onAdd(n))}
+                  aria-label={editChips ? `Remove ${n} from the earlier items` : `Add ${n}`}
+                >
+                  <Icon name={editChips ? 'close' : 'plus'} size={16} />
                   {n}
                 </button>
               ))}

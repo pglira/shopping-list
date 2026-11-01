@@ -62,6 +62,13 @@ function remember(data: Data, name: string): Pick<Data, 'history' | 'uses'> {
   return { history, uses };
 }
 
+// Remove a name and its use count from the history, so that the form does not
+// suggest it.
+export function forget(data: Data, name: string): Data {
+  const { [key(name)]: _, ...uses } = data.uses;
+  return { ...data, history: data.history.filter((h) => !same(h, name)), uses };
+}
+
 // The items that are still to buy, oldest first.
 export function toBuy(data: Data): Item[] {
   return data.items.filter((i) => i.boughtAt === null);
