@@ -282,8 +282,10 @@ function ClearButton({ onConfirm }: { onConfirm: () => void }) {
   );
 }
 
-// Maximum number of earlier items that the form for a new item shows.
+// Maximum number of earlier items that the form for a new item shows: as
+// chips while the item field is empty, and as matches while the user types.
 const SUGGESTIONS = 12;
+const MATCHES = 5;
 
 interface ItemFormProps {
   data: Data;
@@ -296,12 +298,32 @@ interface ItemFormProps {
   onDelete?: () => void;
 }
 
+// The text with the first match of the query in bold.
+function Highlight({ text, query }: { text: string; query: string }) {
+  const at = text.toLocaleLowerCase().indexOf(query.toLocaleLowerCase());
+  if (at < 0) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, at)}
+      <strong>{text.slice(at, at + query.length)}</strong>
+      {text.slice(at + query.length)}
+    </>
+  );
+}
+
+// Add or edit an item. While the user types the name of a new item, the form
+// shows the matching earlier items: a tap on a name puts it into the item
+// field, and a tap on its + adds it to the list. While the item field is
+// empty, the form shows the earlier items as chips; a tap adds the item. The
+// form for a new item stays open after a tap on an earlier item.
 function ItemForm(props: ItemFormProps) {
   const [name, setName] = useState(props.item?.name ?? '');
   const [quantity, setQuantity] = useState(props.item?.quantity ?? '');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const value = name.trim();
-  const earlier = props.item ? [] : suggestions(props.data, name).slice(0, SUGGESTIONS);
+  const earlier = props.item ? [] : suggestions(props.data, name);
+  const nameField = useRef<HTMLInputElement>(null);
+  const quantityField = useRef<HTMLInputElement>(null);
 
   return (
     <div className="backdrop" onClick={props.onCancel}>
@@ -319,6 +341,7 @@ function ItemForm(props: ItemFormProps) {
           <label>
             Item
             <input
+              ref={nameField}
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -329,6 +352,7 @@ function ItemForm(props: ItemFormProps) {
           <label className="quantity-field">
             Quantity
             <input
+              ref={quantityField}
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               placeholder="Optional"
@@ -336,11 +360,42 @@ function ItemForm(props: ItemFormProps) {
             />
           </label>
         </div>
-        {earlier.length > 0 && (
+        {value && earlier.length > 0 && (
+          <ul className="matches" aria-label="Earlier items">
+            {earlier.slice(0, MATCHES).map((n) => (
+              <li key={n}>
+                <button
+                  type="button"
+                  className="match"
+                  onClick={() => {
+                    setName(n);
+                    quantityField.current?.focus();
+                  }}
+                >
+                  <Highlight text={n} query={value} />
+                </button>
+                <button
+                  type="button"
+                  className="match-add"
+                  onClick={() => {
+                    props.onAdd(n);
+                    setName('');
+                    nameField.current?.focus();
+                  }}
+                  aria-label={`Add ${n}`}
+                  title={`Add ${n}`}
+                >
+                  <Icon name="plus" size={18} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {!value && earlier.length > 0 && (
           <div className="suggestions">
             <span className="field-label">Earlier items: tap to add</span>
             <div className="chips">
-              {earlier.map((n) => (
+              {earlier.slice(0, SUGGESTIONS).map((n) => (
                 <button key={n} type="button" className="chip" onClick={() => props.onAdd(n)}>
                   <Icon name="plus" size={16} />
                   {n}
