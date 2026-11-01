@@ -8,6 +8,7 @@ A Progressive Web App for a shopping list.
 - Items to buy show in the order of creation. Items in the cart show below, the most recent first.
 - Swipe an item to the left to show Edit and Delete. Delete asks for a second tap.
 - Remove all items in the cart with "Clear" and a second tap.
+- Move the data to a new phone: tap the backup button in the header and export all data to a JSON file. On the new phone, import the file and tap "Tap to replace all data". The theme is not in the file.
 
 ## Tech
 

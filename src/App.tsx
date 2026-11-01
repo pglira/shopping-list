@@ -1,4 +1,5 @@
 import { type PointerEvent, type ReactNode, useEffect, useRef, useState } from 'react';
+import { BackupForm } from './BackupForm';
 import { Icon, type IconName } from './icons';
 import {
   type Data,
@@ -23,8 +24,12 @@ const THEME_LABELS: Record<Theme, string> = {
   dark: 'Theme: dark',
 };
 
-// The open sheet: an item form, with id null for a new item.
-type Sheet = { id: string | null } | null;
+// The open sheet: an item form (id null for a new item) or the backup.
+type Sheet = { id: string | null } | { backup: true } | null;
+
+// The backup holds all stored data of the app except the theme.
+const APP_ID = 'shopping-list';
+const isDataKey = (key: string) => key.startsWith(`${APP_ID}.`) && key !== `${APP_ID}.theme`;
 
 export default function App() {
   const [data, setData] = useState<Data>(loadData);
@@ -38,7 +43,7 @@ export default function App() {
   const open = toBuy(data);
   const cart = inCart(data);
   const close = () => setSheet(null);
-  const sheetItem = sheet?.id ? data.items.find((i) => i.id === sheet.id) : undefined;
+  const sheetItem = sheet && 'id' in sheet && sheet.id ? data.items.find((i) => i.id === sheet.id) : undefined;
 
   const row = (item: Item) => (
     <SwipeRow
@@ -74,6 +79,9 @@ export default function App() {
       <header>
         <h1>Shopping</h1>
         <div className="header-buttons">
+          <button className="icon" onClick={() => setSheet({ backup: true })} aria-label="Backup" title="Backup">
+            <Icon name="backup" />
+          </button>
           <button
             className="icon"
             onClick={nextTheme}
@@ -109,7 +117,9 @@ export default function App() {
         </>
       )}
 
-      {sheet && (
+      {sheet && 'backup' in sheet && <BackupForm app={APP_ID} isKey={isDataKey} onClose={close} />}
+
+      {sheet && 'id' in sheet && (
         <ItemForm
           key={sheet.id ?? 'new'}
           data={data}
